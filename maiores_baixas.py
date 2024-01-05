@@ -32,6 +32,9 @@ def obter_dados():
             # Ordena os dados com base no valor de 'resultPercentageValue'
             dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue']))
 
+            # Replace comma with dot in the string
+            dados_ordenados = dados_ordenados.replace('.', ',')
+
             # Seleciona os três elementos com os menores valores
             indices_desejados = dados_ordenados[:3]
 
