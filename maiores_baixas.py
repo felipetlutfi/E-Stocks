@@ -29,13 +29,10 @@ def obter_dados():
             # Ordena os dados com base no valor de 'resultPercentageValue'
             dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue'].replace(',', '.')))
 
-            # Seleciona os três elementos com os menores valores
-            indices_desejados = dados_ordenados[:3]
-
              # Seleciona os campos desejados para cada elemento
             indices_desejados = [
                 {'afterMarket': elemento['afterMarket'], 'code': elemento['code'], 'resultPercentageValue': elemento['resultPercentageValue']}
-                for elemento in dados_ordenados
+                for elemento in dados_ordenados[:3]
             ]
             
             # Retorna os dados selecionados como JSON
