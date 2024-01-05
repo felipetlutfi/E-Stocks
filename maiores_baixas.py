@@ -28,11 +28,8 @@ def obter_dados():
             # Ordena os dados com base no valor de 'resultPercentageValue'
             dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue']))
 
-            # Seleciona os três elementos com os menores valores
-            indices_desejados = dados_ordenados[]
-
-            # Retorna os dados selecionados como JSON
-            return jsonify(indices_desejados)
+            # Retorna todos os dados ordenados como JSON
+            return jsonify(dados_ordenados)
 
         else:
             return jsonify({"error": "Elemento não encontrado."})
