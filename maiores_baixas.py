@@ -26,6 +26,8 @@ def obter_dados():
             
             dados = json.loads(result_value)
 
+            x['resultPercentageValue'] = x['resultPercentageValue'].replace(',', '.')
+
             # Ordena os dados com base no valor de 'resultPercentageValue'
             dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue']))
 
