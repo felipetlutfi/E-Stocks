@@ -23,6 +23,10 @@ def obter_dados():
 
         if input_element:
             result_value = input_element.get('value')
+
+            # Replace comma with dot in the string
+            result_value = result_value.replace(',', '.')
+            
             dados = json.loads(result_value)
 
             # Ordena os dados com base no valor de 'resultPercentageValue'
