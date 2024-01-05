@@ -9,39 +9,30 @@ app = Flask(__name__)
 def obter_dados():
     url = "https://statusinvest.com.br/acoes/variacao/ibovespa"
 
-    # Adiciona um cabeçalho de agente de usuário à solicitação
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
     }
 
-    # Faz a solicitação HTTP para obter o conteúdo da página
     response = requests.get(url, headers=headers)
 
-    # Verifica se a solicitação foi bem-sucedida (código de status 200)
     if response.status_code == 200:
-        # Obtém o conteúdo HTML da página
         html_content = response.content
-
-        # Usa o BeautifulSoup para analisar o HTML
         soup = BeautifulSoup(html_content, 'html.parser')
 
-        # Encontra o elemento input com os atributos especificados
         input_element = soup.find('input', {'id': 'result', 'name': 'result', 'type': 'hidden'})
 
-        # Verifica se o elemento foi encontrado
         if input_element:
-            # Obtém o valor do atributo 'value'
             result_value = input_element.get('value')
-
-            # Converte a string JSON para uma lista de dicionários em Python
             dados = json.loads(result_value)
 
-            # Seleciona apenas os elementos de índice 31, 32 e 33
-            indices_desejados = [32, 33, 34]
-            output_data = [{'afterMarket': dados[i]['afterMarket'], 'code': dados[i]['code'], 'resultPercentageValue': dados[i]['resultPercentageValue']} for i in indices_desejados]
+            # Ordena os dados com base no valor de 'resultPercentageValue'
+            dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue']))
+
+            # Seleciona os três elementos com os menores valores
+            indices_desejados = dados_ordenados[:3]
 
             # Retorna os dados selecionados como JSON
-            return jsonify(output_data)
+            return jsonify(indices_desejados)
 
         else:
             return jsonify({"error": "Elemento não encontrado."})
