@@ -23,9 +23,6 @@ def obter_dados():
 
         if input_element:
             result_value = input_element.get('value')
-
-            # Replace comma with dot in the string
-            result_value = result_value.replace(',', '.')
             
             dados = json.loads(result_value)
 
@@ -33,7 +30,7 @@ def obter_dados():
             dados_ordenados = sorted(dados, key=lambda x: float(x['resultPercentageValue']))
 
             # Replace comma with dot in the string
-            dados_ordenados = dados_ordenados.replace('.', ',')
+            dados_ordenados = dados_ordenados.replace(',', '.')
 
             # Seleciona os três elementos com os menores valores
             indices_desejados = dados_ordenados[:3]
