@@ -32,6 +32,12 @@ def obter_dados():
             # Seleciona os três elementos com os menores valores
             indices_desejados = dados_ordenados[:3]
 
+             # Seleciona os campos desejados para cada elemento
+            indices_desejados = [
+                {'afterMarket': elemento['afterMarket'], 'code': elemento['code'], 'resultPercentageValue': elemento['resultPercentageValue']}
+                for elemento in dados_ordenados
+            ]
+            
             # Retorna os dados selecionados como JSON
             return jsonify(indices_desejados)
 
