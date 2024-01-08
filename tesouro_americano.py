@@ -2,11 +2,9 @@ from flask import Flask, jsonify
 import requests
 from datetime import datetime, timedelta
 
-api_key = 'C12M6F5RNUP4MWL9'
-
 app = Flask(__name__)
 
-@app.route('/obter_cotacao_tesouro_10_anos', methods=['GET'])
+@app.route('/obter_cotacao_tesouro_10_anos/<api_key>', methods=['GET'])
 def obter_cotacao_tesouro_10_anos():
     # URL da API Alpha Vantage para obter informações sobre o Tesouro Americano de 10 anos
     api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey=C12M6F5RNUP4MWL9"
@@ -45,6 +43,9 @@ def obter_cotacao_tesouro_10_anos():
             }
 
             return jsonify(resultado), 200
+        else:
+            return jsonify({"error": "Não foram encontrados dados suficientes."}), 500
+
     else:
         return jsonify({"error": f"Erro ao obter dados. Código de status: {response.status_code}"}), 500
 
