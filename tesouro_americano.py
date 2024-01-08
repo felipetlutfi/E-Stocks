@@ -6,10 +6,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def obter_cotacao_tesouro_10_anos():
-    api_key = "C12M6F5RNUP4MWL9"
 
     # URL da API Alpha Vantage para obter informações sobre o Tesouro Americano de 10 anos
-    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey={api_key}"
+    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey=C12M6F5RNUP4MWL9"
 
     # Fazendo a solicitação à API
     response = requests.get(api_url)
