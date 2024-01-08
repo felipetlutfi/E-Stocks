@@ -16,36 +16,41 @@ def obter_cotacao_tesouro_10_anos(api_key):
         data = response.json()
 
         # Obtendo informações relevantes
-        if 'data' in data and len(data['data']) >= 2:
-            primeiro_elemento = data['data'][0]
-            segundo_elemento = data['data'][1]
-
-            primeiro_date = primeiro_elemento.get('date', None)
-            primeiro_value = primeiro_elemento.get('value', None)
-
-            segundo_date = segundo_elemento.get('date', None)
-            segundo_value = segundo_elemento.get('value', None)
-
-            # Calculando a variação percentual
-            if primeiro_value is not None and segundo_value is not None:
-                variacao_percentual = ((float(primeiro_value) - float(segundo_value)) / abs(float(segundo_value))) * 100
-            else:
-                variacao_percentual = None
-
-            # Criando um dicionário com os resultados desejados
-            resultado = {
-                "primeiro_date": primeiro_date,
-                "primeiro_value": primeiro_value,
-                "segundo_date": segundo_date,
-                "segundo_value": segundo_value,
-                "variacao_percentual": variacao_percentual
-            }
-
-            # Convertendo o dicionário para formato JSON
-            resultado_json = json.dumps(resultado, indent=2)
-            return resultado_json
-        else:
+        time_series_data = data.get('Time Series (Daily)', {})
+        if not time_series_data:
             return "Não foram encontrados dados suficientes."
+
+        dates = list(time_series_data.keys())[:2]
+        if len(dates) < 2:
+            return "Não foram encontrados dados suficientes."
+
+        primeiro_elemento = time_series_data[dates[0]]
+        segundo_elemento = time_series_data[dates[1]]
+
+        primeiro_date = dates[0]
+        primeiro_value = primeiro_elemento.get('1. open', None)
+
+        segundo_date = dates[1]
+        segundo_value = segundo_elemento.get('1. open', None)
+
+        # Calculando a variação percentual
+        if primeiro_value is not None and segundo_value is not None:
+            variacao_percentual = ((float(primeiro_value) - float(segundo_value)) / abs(float(segundo_value))) * 100
+        else:
+            variacao_percentual = None
+
+        # Criando um dicionário com os resultados desejados
+        resultado = {
+            "primeiro_date": primeiro_date,
+            "primeiro_value": primeiro_value,
+            "segundo_date": segundo_date,
+            "segundo_value": segundo_value,
+            "variacao_percentual": variacao_percentual
+        }
+
+        # Convertendo o dicionário para formato JSON
+        resultado_json = json.dumps(resultado, indent=2)
+        return resultado_json
 
     else:
         return f"Erro ao obter dados. Código de status: {response.status_code}"
