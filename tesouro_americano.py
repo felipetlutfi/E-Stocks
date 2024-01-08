@@ -1,6 +1,5 @@
 from flask import Flask, jsonify
 import requests
-import json
 
 app = Flask(__name__)
 
@@ -10,43 +9,20 @@ def obter_cotacao_tesouro_10_anos(api_key):
 
     # Fazendo a solicitação à API
     response = requests.get(api_url)
+    data = response.json()
 
-    if response.status_code == 200:
-        # Convertendo a resposta para JSON
-        data = response.json()
+    if 'data' in data and data['data']:
+        primeiro_elemento = data['data'][0]
 
-        # Obtendo informações relevantes
-        if 'data' in data and len(data['data']) >= 2:
-            primeiro_elemento = data['data'][0]
-            segundo_elemento = data['data'][1]
+        primeiro_date = primeiro_elemento.get('date', None)
+        primeiro_value = primeiro_elemento.get('value', None)
 
-            primeiro_date = primeiro_elemento.get('date', None)
-            primeiro_value = primeiro_elemento.get('value', None)
-
-            segundo_date = segundo_elemento.get('date', None)
-            segundo_value = segundo_elemento.get('value', None)
-
-            # Calculando a variação percentual
-            if primeiro_value is not None and segundo_value is not None:
-                variacao_percentual = ((float(primeiro_value) - float(segundo_value)) / abs(float(segundo_value))) * 100
-            else:
-                variacao_percentual = None
-
-            # Criando um dicionário com os resultados desejados
-            resultado = {
-                "primeiro_date": primeiro_date,
-                "primeiro_value": primeiro_value,
-                "segundo_date": segundo_date,
-                "segundo_value": segundo_value,
-                "variacao_percentual": variacao_percentual
-            }
-
-            return resultado
-        else:
-            return {"error": "Não foram encontrados dados suficientes."}
-
+        return {
+            "primeiro_date": primeiro_date,
+            "primeiro_value": primeiro_value,
+        }
     else:
-        return {"error": f"Erro ao obter dados. Código de status: {response.status_code}"}
+        return {"error": "Não foi possível obter dados suficientes da API."}
 
 @app.route('/cotacao_tesouro_10_anos')
 def cotacao_tesouro_10_anos():
