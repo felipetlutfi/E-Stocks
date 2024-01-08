@@ -53,7 +53,7 @@ def obter_cotacao_tesouro_10_anos():
         return f"Erro ao obter dados. Código de status: {response.status_code}"
 
 # Exibindo o resultado
-print(obter_cotacao_tesouro_10_anos(api_key))
+print(obter_cotacao_tesouro_10_anos())
 
 if __name__ == '__main__':
     app.run(debug=True)
