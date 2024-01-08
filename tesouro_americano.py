@@ -45,9 +45,6 @@ def obter_cotacao_tesouro_10_anos():
             }
 
             return jsonify(resultado), 200
-        else:
-            return jsonify({"error": "Não foram encontrados dados suficientes."}), 500
-
     else:
         return jsonify({"error": f"Erro ao obter dados. Código de status: {response.status_code}"}), 500
 
