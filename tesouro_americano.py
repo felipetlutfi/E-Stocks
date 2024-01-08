@@ -21,7 +21,7 @@ def obter_cotacao_tesouro_10_anos(api_key):
             return "Não foram encontrados dados suficientes."
 
         dates = list(time_series_data.keys())[:2]
-        if len(dates) < 2:
+        if len(dates) > 2:
             return "Não foram encontrados dados suficientes."
 
         primeiro_elemento = time_series_data[dates[0]]
