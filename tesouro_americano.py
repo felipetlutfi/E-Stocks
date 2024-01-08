@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-@app.route('/obter_cotacao_tesouro_10_anos/<api_key>', methods=['GET'])
+@app.route('/obter_cotacao_tesouro_10_anos', methods=['GET'])
 def obter_cotacao_tesouro_10_anos():
     # URL da API Alpha Vantage para obter informações sobre o Tesouro Americano de 10 anos
     api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey=C12M6F5RNUP4MWL9"
