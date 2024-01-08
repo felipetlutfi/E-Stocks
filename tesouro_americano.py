@@ -1,14 +1,10 @@
 import requests
 import json
 from datetime import datetime, timedelta
-from flask import Flask, jsonify
 
-app = Flask(__name__)
-
-@app.route('/tesouro_americano', methods=['GET'])
-def obter_cotacao_tesouro_10_anos():
+def obter_cotacao_tesouro_10_anos(api_key):
     # URL da API Alpha Vantage para obter informações sobre o Tesouro Americano de 10 anos
-    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey=C12M6F5RNUP4MWL9"
+    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey={api_key}"
 
     # Fazendo a solicitação à API
     response = requests.get(api_url)
@@ -52,8 +48,8 @@ def obter_cotacao_tesouro_10_anos():
     else:
         return f"Erro ao obter dados. Código de status: {response.status_code}"
 
-# Exibindo o resultado
-print(obter_cotacao_tesouro_10_anos())
+# Insira sua chave de API da Alpha Vantage aqui
+api_key = "C12M6F5RNUP4MWL9"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Exibindo o resultado
+print(obter_cotacao_tesouro_10_anos(api_key))
