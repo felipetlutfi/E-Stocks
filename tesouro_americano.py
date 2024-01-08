@@ -49,5 +49,7 @@ def obter_cotacao_tesouro_10_anos(api_key):
     else:
         return jsonify({"error": f"Erro ao obter dados. Código de status: {response.status_code}"}), 500
 
+api_key = 'C12M6F5RNUP4MWL9'
+
 if __name__ == '__main__':
     app.run(debug=True)
