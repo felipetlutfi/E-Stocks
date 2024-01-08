@@ -18,7 +18,7 @@ def obter_cotacao_tesouro_10_anos():
         data = response.json()
 
         # Obtendo informações relevantes
-        if 'data' in data and len(data['data']) >= 2:
+        if 'data' in data and len(data['data']) >= 0:
             primeiro_elemento = data['data'][0]
             segundo_elemento = data['data'][1]
 
