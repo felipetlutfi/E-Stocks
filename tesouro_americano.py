@@ -1,13 +1,13 @@
 from flask import Flask, jsonify
-import requests
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-@app.route('/obter_cotacao_tesouro_10_anos', methods=['GET'])
+@app.route('/')
 def obter_cotacao_tesouro_10_anos():
+    api_key = "C12M6F5RNUP4MWL9"
+
     # URL da API Alpha Vantage para obter informações sobre o Tesouro Americano de 10 anos
-    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey=C12M6F5RNUP4MWL9"
+    api_url = f"https://www.alphavantage.co/query?function=TREASURY_YIELD&maturity=10y&interval=daily&apikey={api_key}"
 
     # Fazendo a solicitação à API
     response = requests.get(api_url)
@@ -29,7 +29,7 @@ def obter_cotacao_tesouro_10_anos():
 
             # Calculando a variação percentual
             if primeiro_value is not None and segundo_value is not None:
-                variacao_percentual = ((float(segundo_value) - float(primeiro_value)) / abs(float(primeiro_value))) * 100
+                variacao_percentual = ((float(primeiro_value) - float(segundo_value)) / abs(float(segundo_value))) * 100
             else:
                 variacao_percentual = None
 
@@ -42,12 +42,12 @@ def obter_cotacao_tesouro_10_anos():
                 "variacao_percentual": variacao_percentual
             }
 
-            return jsonify(resultado), 200
+            return jsonify(resultado)
         else:
-            return jsonify({"error": "Não foram encontrados dados suficientes."}), 500
+            return "Não foram encontrados dados suficientes."
 
     else:
-        return jsonify({"error": f"Erro ao obter dados. Código de status: {response.status_code}"}), 500
+        return f"Erro ao obter dados. Código de status: {response.status_code}"
 
 if __name__ == '__main__':
     app.run(debug=True)
