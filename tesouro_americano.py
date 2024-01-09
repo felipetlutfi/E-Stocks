@@ -12,7 +12,7 @@ def get_us10y_price():
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         span_last_price = soup.find('span', class_='QuoteStrip-lastPrice')
-        last_price = float(span_last_price.text.strip().replace(',', ''))
+        last_price = float(span_last_price.text.strip().replace(',', '').replace('%', ''))
         return last_price
     else:
         return None
