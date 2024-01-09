@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -19,22 +18,27 @@ def get_us10y_price():
         return None
 
 def get_us10y_price_previous_day():
-    yesterday = datetime.now() - timedelta(days=1)
-    date_str = yesterday.strftime("%Y%m%d")
-
-    url = f"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month={date_str}"
+    url = f"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value_month=202401"
 
     response = requests.get(url)
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        td_element = soup.find('td', {'headers': 'view-field-bc-10year-table-column'})
-        if td_element:
-            return td_element.text.strip()
-    return None
+        
+        # Encontrar todas as ocorrências da tag td com os atributos específicos
+        td_elements = soup.find_all('td', {'headers': 'view-field-bc-10year-table-column'}, class_='views-field views-field-field-bc-10year')
 
-@app.route('/us10y_data', methods=['GET'])
-def us10y_data():
+        if td_elements:
+            # Pegar o texto da última ocorrência
+            last_td_element = td_elements[-1]
+            yesterday_price = last_td_element.text.strip()
+            return yesterday_price
+        else:
+            return None
+    else:
+        return None
+
+def get_us10y_data():
     us10y_price_value = get_us10y_price()
     us10y_price_previous_day_value = get_us10y_price_previous_day()
     
@@ -43,9 +47,14 @@ def us10y_data():
             "US10Y_Price": us10y_price_value,
             "US10Y_Price_Previous_Day": us10y_price_previous_day_value
         }
-        return jsonify(data)
+        return data
     else:
-        return jsonify({"error": "Erro ao obter a cotação do Tesouro Americano de 10 anos"}), 500
+        return {"error": "Erro ao obter a cotação do Tesouro Americano de 10 anos"}
+
+@app.route('/us10y_data', methods=['GET'])
+def us10y_data_route():
+    us10y_data = get_us10y_data()
+    return jsonify(us10y_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
