@@ -53,7 +53,6 @@ def obter_dados():
 @app.route('/')
 def index():
     dados = obter_dados()
-    return render_template('index.html', dados=dados)
 
 if __name__ == '__main__':
     app.run(debug=True)
