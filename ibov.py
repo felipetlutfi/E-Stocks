@@ -53,6 +53,7 @@ def obter_dados():
 @app.route('/')
 def index():
     dados = obter_dados()
+    return jsonify(dados)
 
 if __name__ == '__main__':
     app.run(debug=True)
