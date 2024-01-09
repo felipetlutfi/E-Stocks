@@ -12,7 +12,7 @@ def get_us10y_price():
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         span_last_price = soup.find('span', class_='QuoteStrip-lastPrice')
-        last_price = span_last_price.text.strip()
+        last_price = float(span_last_price.text.strip().replace(',', ''))
         return last_price
     else:
         return None
@@ -31,7 +31,7 @@ def get_us10y_price_previous_day():
         if td_elements:
             # Pegar o texto da última ocorrência
             last_td_element = td_elements[-1]
-            yesterday_price = last_td_element.text.strip()
+            yesterday_price = float(last_td_element.text.strip().replace(',', ''))
             return yesterday_price
         else:
             return None
@@ -43,9 +43,13 @@ def get_us10y_data():
     us10y_price_previous_day_value = get_us10y_price_previous_day()
     
     if us10y_price_value is not None and us10y_price_previous_day_value is not None:
+        # Calculando a variação percentual
+        percentage_change = ((us10y_price_value - us10y_price_previous_day_value) / us10y_price_previous_day_value) * 100
+
         data = {
             "US10Y_Price": us10y_price_value,
-            "US10Y_Price_Previous_Day": us10y_price_previous_day_value
+            "US10Y_Price_Previous_Day": us10y_price_previous_day_value,
+            "Percentage_Change": round(percentage_change, 2)
         }
         return data
     else:
