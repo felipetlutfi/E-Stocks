@@ -1,48 +1,59 @@
+from flask import Flask, render_template
 import requests
 from bs4 import BeautifulSoup
 import json
 
-# Defina a URL alvo
-url = "https://www.infomoney.com.br/cotacoes/b3/indice/ibovespa/"
+app = Flask(__name__)
 
-# Faça a solicitação HTTP e obtenha o conteúdo HTML
-response = requests.get(url)
-html_content = response.text
+def obter_dados():
+    # Defina a URL alvo
+    url = "https://www.infomoney.com.br/cotacoes/b3/indice/ibovespa/"
 
-# Use o BeautifulSoup para analisar o HTML
-soup = BeautifulSoup(html_content, "html.parser")
+    # Faça a solicitação HTTP e obtenha o conteúdo HTML
+    response = requests.get(url)
+    html_content = response.text
 
-# Encontre a <div class="tables">
-div_tables = soup.find("div", class_="tables")
+    # Use o BeautifulSoup para analisar o HTML
+    soup = BeautifulSoup(html_content, "html.parser")
 
-# Encontre a tabela desejada
-tabela_fechamento = div_tables.find("td", string="Fechamento anterior")
+    # Encontre a <div class="tables">
+    div_tables = soup.find("div", class_="tables")
 
-# Extraia a informação do "Fechamento anterior"
-fechamento_anterior = tabela_fechamento.find_next("td").text.strip()
+    # Encontre a tabela desejada
+    tabela_fechamento = div_tables.find("td", string="Fechamento anterior")
 
-# Encontre o elemento <div class="value">
-div_value = soup.find("div", class_="value")
+    # Extraia a informação do "Fechamento anterior"
+    fechamento_anterior = tabela_fechamento.find_next("td").text.strip()
 
-# Encontre o elemento <p> dentro da <div class="value">
-p_element = div_value.find("p")
+    # Encontre o elemento <div class="value">
+    div_value = soup.find("div", class_="value")
 
-# Obtenha o texto do elemento <p>
-cotacao_atual = p_element.text.strip()
+    # Encontre o elemento <p> dentro da <div class="value">
+    p_element = div_value.find("p")
 
-# Converta os valores para float
-cotacao_atual = float(cotacao_atual.replace(',', '.'))
-fechamento_anterior = float(fechamento_anterior.replace(',', '.'))
+    # Obtenha o texto do elemento <p>
+    cotacao_atual = p_element.text.strip()
 
-# Calcule a diferença percentual
-diferenca_percentual = ((cotacao_atual - fechamento_anterior) / fechamento_anterior) * 100
+    # Converta os valores para float
+    cotacao_atual = float(cotacao_atual.replace(',', '.'))
+    fechamento_anterior = float(fechamento_anterior.replace(',', '.'))
 
-# Crie um dicionário JSON com as informações desejadas
-json_data = {
-    "cotacao_atual": cotacao_atual,
-    "fechamento_anterior": fechamento_anterior,
-    "diferenca_percentual": round(diferenca_percentual,2)
-}
+    # Calcule a diferença percentual
+    diferenca_percentual = ((cotacao_atual - fechamento_anterior) / fechamento_anterior) * 100
 
-# Imprima ou faça o que quiser com o JSON
-print(json.dumps(json_data, indent=2))
+    # Crie um dicionário JSON com as informações desejadas
+    dados = {
+        "cotacao_atual": cotacao_atual,
+        "fechamento_anterior": fechamento_anterior,
+        "diferenca_percentual": diferenca_percentual
+    }
+
+    return dados
+
+@app.route('/')
+def index():
+    dados = obter_dados()
+    return render_template('index.html', dados=dados)
+
+if __name__ == '__main__':
+    app.run(debug=True)
