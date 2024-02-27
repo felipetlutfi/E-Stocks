@@ -15,13 +15,11 @@ def get_cdi_value():
     if div_description:
         # Encontrar todas as tags <b> dentro da div
         b_tags = div_description.find_all("b")
+        # Obter o texto da segunda tag <b>
+        cdi_value = b_tags[1].get_text()
+        return cdi_value
 
-        if len(b_tags) >= 2:
-            # Obter o texto da segunda tag <b>
-            cdi_value = b_tags[1].get_text()
-            return cdi_value
 
-    return None
 
 @app.route('/cdi', methods=['GET'])
 def get_cdi():
