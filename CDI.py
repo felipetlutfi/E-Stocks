@@ -13,11 +13,12 @@ def get_cdi_value():
     div_description = soup.find("div", class_="description")
 
     if div_description:
-        # Encontrar a tag <b> que contém o valor do CDI hoje
-        cdi_tag = div_description.find("b", string="CDI hoje")
+        # Encontrar todas as tags <b> dentro da div
+        b_tags = div_description.find_all("b")
 
-        if cdi_tag:
-            cdi_value = cdi_tag.find_next("b").get_text()
+        if len(b_tags) >= 2:
+            # Obter o texto da segunda tag <b>
+            cdi_value = b_tags[1].get_text()
             return cdi_value
 
     return None
