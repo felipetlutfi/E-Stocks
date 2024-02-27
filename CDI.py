@@ -4,31 +4,32 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-@app.route('/cdi', methods=['GET'])
-def get_cdi():
-    # URL da página com o índice CDI
+def get_cdi_value():
     url = "https://investidor10.com.br/indices/cdi/"
-
-    # Faz a requisição HTTP para obter o conteúdo da página
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Encontra a div com a classe "description"
+    # Encontrar a div com a classe "description"
     div_description = soup.find("div", class_="description")
 
-    # Verifica se a div foi encontrada antes de tentar extrair o texto
     if div_description:
-        # Encontra todas as tags <b> dentro da div
-        b_tags = div_description.find_all("b")
+        # Encontrar a tag <b> que contém o valor do CDI hoje
+        cdi_tag = div_description.find("b", string="CDI hoje")
 
-        # Extrai o valor dentro da primeira tag <b>
-        if b_tags:
-            cdi_value = b_tags[0].get_text()
-            return jsonify({"CDI_hoje": cdi_value})
-        else:
-            return jsonify({"error": "Nenhuma tag <b> encontrada dentro da div."}), 500
+        if cdi_tag:
+            cdi_value = cdi_tag.find_next("b").get_text()
+            return cdi_value
+
+    return None
+
+@app.route('/cdi', methods=['GET'])
+def get_cdi():
+    cdi_value = get_cdi_value()
+
+    if cdi_value:
+        return jsonify({"CDI_hoje": cdi_value})
     else:
-        return jsonify({"error": "Div com a classe 'description' não encontrada."}), 500
+        return jsonify({"error": "Valor do CDI não encontrado"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
