@@ -1,34 +1,34 @@
+from flask import Flask, jsonify
 import requests
 from bs4 import BeautifulSoup
-import json
 
-# URL da página com o índice CDI
-url = "https://investidor10.com.br/indices/cdi/"
+app = Flask(__name__)
 
-# Faz a requisição HTTP para obter o conteúdo da página
-response = requests.get(url)
-soup = BeautifulSoup(response.content, "html.parser")
+@app.route('/cdi', methods=['GET'])
+def get_cdi():
+    # URL da página com o índice CDI
+    url = "https://investidor10.com.br/indices/cdi/"
 
-# Encontra a div com a classe "description"
-div_description = soup.find("div", class_="description")
+    # Faz a requisição HTTP para obter o conteúdo da página
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
 
-# Verifica se a div foi encontrada antes de tentar extrair o texto
-if div_description:
-    # Encontra todas as tags <b> dentro da div
-    b_tags = div_description.find_all("b")
+    # Encontra a div com a classe "description"
+    div_description = soup.find("div", class_="description")
 
-    # Extrai o valor dentro da primeira tag <b>
-    if b_tags:
-        cdi_value = b_tags[0].get_text()
-        
-        # Cria um dicionário com o valor do CDI hoje
-        cdi_json = {"CDI_hoje": cdi_value}
+    # Verifica se a div foi encontrada antes de tentar extrair o texto
+    if div_description:
+        # Encontra todas as tags <b> dentro da div
+        b_tags = div_description.find_all("b")
 
-        # Converte o dicionário para JSON
-        cdi_json_str = json.dumps(cdi_json, ensure_ascii=False, indent=2)
-
-        print(cdi_json_str)
+        # Extrai o valor dentro da primeira tag <b>
+        if b_tags:
+            cdi_value = b_tags[0].get_text()
+            return jsonify({"CDI_hoje": cdi_value})
+        else:
+            return jsonify({"error": "Nenhuma tag <b> encontrada dentro da div."}), 500
     else:
-        print("Nenhuma tag <b> encontrada dentro da div.")
-else:
-    print("Div com a classe 'description' não encontrada.")
+        return jsonify({"error": "Div com a classe 'description' não encontrada."}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
